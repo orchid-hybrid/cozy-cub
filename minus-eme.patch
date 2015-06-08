@@ -1,0 +1,33 @@
+diff -rupN mozilla-central/browser/base/content/browser.js mozilla-central-minus-eme/browser/base/content/browser.js
+--- mozilla-central/browser/base/content/browser.js	2015-05-29 18:06:11.659565989 +0000
++++ mozilla-central-minus-eme/browser/base/content/browser.js	2015-05-29 19:33:18.546193580 +0000
+@@ -267,7 +267,7 @@ let gInitialPages = [
+ #include browser-ctrlTab.js
+ #include browser-customization.js
+ #include browser-devedition.js
+-#include browser-eme.js
++//#include browser-eme.js
+ #include browser-feeds.js
+ #include browser-fullScreen.js
+ #include browser-fullZoom.js
+diff -rupN mozilla-central/toolkit/mozapps/installer/packager.mk mozilla-central-minus-eme/toolkit/mozapps/installer/packager.mk
+--- mozilla-central/toolkit/mozapps/installer/packager.mk	2015-05-29 18:06:32.832899165 +0000
++++ mozilla-central-minus-eme/toolkit/mozapps/installer/packager.mk	2015-05-29 19:32:58.369527064 +0000
+@@ -4,7 +4,7 @@
+ 
+ include $(MOZILLA_DIR)/toolkit/mozapps/installer/package-name.mk
+ include $(MOZILLA_DIR)/toolkit/mozapps/installer/upload-files.mk
+-include $(MOZILLA_DIR)/toolkit/mozapps/installer/make-eme.mk
++#include $(MOZILLA_DIR)/toolkit/mozapps/installer/make-eme.mk
+ 
+ # This is how we create the binary packages we release to the public.
+ 
+@@ -26,7 +26,7 @@ ifdef MOZ_SIGN_PREPARED_PACKAGE_CMD
+ # The && true is necessary to make sure Pymake spins a shell
+ 	$(MOZ_SIGN_PREPARED_PACKAGE_CMD) $(DEPTH)/installer-stage && true
+ endif
+-	$(call MAKE_SIGN_EME_VOUCHER,$(DEPTH)/installer-stage/core)
++	#$(call MAKE_SIGN_EME_VOUCHER,$(DEPTH)/installer-stage/core)
+ 	@(cd $(DEPTH)/installer-stage/core && $(CREATE_PRECOMPLETE_CMD))
+ 
+ ifeq (gonk,$(MOZ_WIDGET_TOOLKIT))
