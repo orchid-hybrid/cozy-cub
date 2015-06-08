@@ -1,0 +1,20 @@
+# HG changeset patch
+# User cozy cub
+# Date 1433725435 0
+#      Mon Jun 08 01:03:55 2015 +0000
+# Node ID baff9b441911b7c6995b12816102d5edb85a7df8
+# Parent  dd4325bea3ac89f007f5acf807a04b61ab6da9d2
+turned off webgl by default
+
+diff -r dd4325bea3ac -r baff9b441911 modules/libpref/init/all.js
+--- a/modules/libpref/init/all.js	Mon Jun 08 00:48:15 2015 +0000
++++ b/modules/libpref/init/all.js	Mon Jun 08 01:03:55 2015 +0000
+@@ -4085,7 +4085,7 @@
+ pref("gl.msaa-level", 2);
+ #endif
+ pref("webgl.force-enabled", false);
+-pref("webgl.disabled", false);
++pref("webgl.disabled", true);
+ pref("webgl.disable-angle", false);
+ pref("webgl.min_capability_mode", false);
+ pref("webgl.disable-extensions", false);
