@@ -1,0 +1,30 @@
+diff -rupN mozilla-central/services/healthreport/healthreport-prefs.js mozilla-central-health-report-off/services/healthreport/healthreport-prefs.js
+--- mozilla-central/services/healthreport/healthreport-prefs.js	2015-05-29 18:05:56.122899439 +0000
++++ mozilla-central-health-report-off/services/healthreport/healthreport-prefs.js	2015-05-29 19:39:07.546190970 +0000
+@@ -4,7 +4,7 @@
+  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
+ 
+ pref("datareporting.healthreport.currentDaySubmissionFailureCount", 0);
+-pref("datareporting.healthreport.documentServerURI", "https://fhr.data.mozilla.com/");
++pref("datareporting.healthreport.documentServerURI", "localhost");
+ pref("datareporting.healthreport.documentServerNamespace", "metrics");
+ pref("datareporting.healthreport.infoURL", "https://www.mozilla.org/legal/privacy/firefox.html#health-report");
+ pref("datareporting.healthreport.logging.consoleEnabled", true);
+@@ -18,9 +18,9 @@ pref("datareporting.healthreport.nextDat
+ pref("datareporting.healthreport.pendingDeleteRemoteData", false);
+ 
+ // Health Report is enabled by default on all channels.
+-pref("datareporting.healthreport.uploadEnabled", true);
++pref("datareporting.healthreport.uploadEnabled", false);
+ 
+-pref("datareporting.healthreport.service.enabled", true);
++pref("datareporting.healthreport.service.enabled", false);
+ pref("datareporting.healthreport.service.loadDelayMsec", 10000);
+ pref("datareporting.healthreport.service.loadDelayFirstRunMsec", 60000);
+ 
+@@ -34,4 +34,4 @@ pref("datareporting.healthreport.service
+ #endif
+     );
+ 
+-pref("datareporting.healthreport.about.reportUrl",   "https://fhr.cdn.mozilla.net/%LOCALE%/");
++pref("datareporting.healthreport.about.reportUrl",   "localhost");
