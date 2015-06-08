@@ -1,0 +1,163 @@
+# HG changeset patch
+# User cozy cub
+# Date 1433724495 0
+#      Mon Jun 08 00:48:15 2015 +0000
+# Node ID dd4325bea3ac89f007f5acf807a04b61ab6da9d2
+# Parent  fd224540ba0da3fd01d28873e3f2ad8470f5d9d3
+deleted pocket
+
+diff -r fd224540ba0d -r dd4325bea3ac browser/base/content/browser.js
+--- a/browser/base/content/browser.js	Mon Jun 08 00:31:23 2015 +0000
++++ b/browser/base/content/browser.js	Mon Jun 08 00:48:15 2015 +0000
+@@ -52,8 +52,8 @@
+                                    "nsIDNSService");
+ XPCOMUtils.defineLazyModuleGetter(this, "LightweightThemeManager",
+                                   "resource://gre/modules/LightweightThemeManager.jsm");
+-XPCOMUtils.defineLazyModuleGetter(this, "Pocket",
+-                                  "resource:///modules/Pocket.jsm");
++//XPCOMUtils.defineLazyModuleGetter(this, "Pocket",
++//                                  "resource:///modules/Pocket.jsm");
+ 
+ // Can't use XPCOMUtils for these because the scripts try to define the variables
+ // on window, and so the defineProperty inside defineLazyGetter fails.
+@@ -61,7 +61,7 @@
+   get: function() {
+     // Avoid this getter running again:
+     delete window.pktApi;
+-    Services.scriptloader.loadSubScript("chrome://browser/content/pocket/pktApi.js", window);
++    //Services.scriptloader.loadSubScript("chrome://browser/content/pocket/pktApi.js", window);
+     return window.pktApi;
+   },
+   configurable: true,
+@@ -74,7 +74,7 @@
+       // Avoid either of these getters running again:
+       delete window.pktUI;
+       delete window.pktUIMessaging;
+-      Services.scriptloader.loadSubScript("chrome://browser/content/pocket/main.js", window);
++      //Services.scriptloader.loadSubScript("chrome://browser/content/pocket/main.js", window);
+       return window[prop];
+     },
+     configurable: true,
+diff -r fd224540ba0d -r dd4325bea3ac browser/base/content/browser.xul
+--- a/browser/base/content/browser.xul	Mon Jun 08 00:31:23 2015 +0000
++++ b/browser/base/content/browser.xul	Mon Jun 08 00:48:15 2015 +0000
+@@ -671,9 +671,9 @@
+              fullscreentoolbar="true" mode="icons" customizable="true"
+              iconsize="small"
+ #ifdef MOZ_DEV_EDITION
+-             defaultset="urlbar-container,search-container,developer-button,bookmarks-menu-button,pocket-button,downloads-button,home-button,loop-button"
++             defaultset="urlbar-container,search-container,developer-button,bookmarks-menu-button,downloads-button,home-button"
+ #else
+-             defaultset="urlbar-container,search-container,bookmarks-menu-button,pocket-button,downloads-button,home-button,loop-button"
++             defaultset="urlbar-container,search-container,bookmarks-menu-button,downloads-button,home-button"
+ #endif
+              customizationtarget="nav-bar-customization-target"
+              overflowable="true"
+@@ -825,7 +825,6 @@
+                      oncommand="BookmarksEventHandler.onCommand(event, this.parentNode._placesView);"
+                      onclick="BookmarksEventHandler.onClick(event, this.parentNode._placesView);"
+                      onpopupshowing="BookmarkingUI.onPopupShowing(event);
+-                                     BookmarkingUI.updatePocketItemVisibility('BMB_');
+                                      BookmarkingUI.attachPlacesView(event, this);"
+                      tooltip="bhTooltip" popupsinherittooltip="true">
+             <menuitem id="BMB_viewBookmarksSidebar"
+@@ -842,11 +841,6 @@
+                       command="Browser:ShowAllBookmarks"
+                       key="manBookmarkKb"/>
+             <menuseparator/>
+-            <menuitem id="BMB_pocket"
+-                      class="menuitem-iconic bookmark-item subviewbutton"
+-                      label="&pocketMenuitem.label;"
+-                      oncommand="openUILink(Pocket.listURL, event);"/>
+-            <menuseparator id="BMB_pocketSeparator"/>
+             <menuitem id="BMB_subscribeToPageMenuitem"
+ #ifndef XP_MACOSX
+                       class="menuitem-iconic subviewbutton"
+diff -r fd224540ba0d -r dd4325bea3ac browser/base/content/nsContextMenu.js
+--- a/browser/base/content/nsContextMenu.js	Mon Jun 08 00:31:23 2015 +0000
++++ b/browser/base/content/nsContextMenu.js	Mon Jun 08 00:48:15 2015 +0000
+@@ -10,8 +10,8 @@
+ 
+ XPCOMUtils.defineLazyModuleGetter(this, "CustomizableUI",
+   "resource:///modules/CustomizableUI.jsm");
+-XPCOMUtils.defineLazyModuleGetter(this, "Pocket",
+-  "resource:///modules/Pocket.jsm");
++//XPCOMUtils.defineLazyModuleGetter(this, "Pocket",
++//  "resource:///modules/Pocket.jsm");
+ 
+ var gContextMenuContentData = null;
+ 
+@@ -184,47 +184,6 @@
+                      CastingApps.getServicesForVideo(this.target).length > 0;
+     this.setItemAttr("context-castvideo", "disabled", !shouldShowCast);
+ 
+-    this.initPocketItems();
+-  },
+-
+-  initPocketItems: function CM_initPocketItems() {
+-    var showSaveCurrentPageToPocket = !(this.onTextInput || this.onLink ||
+-                                        this.isContentSelected || this.onImage ||
+-                                        this.onCanvas || this.onVideo || this.onAudio);
+-    let targetURI = (this.onSaveableLink || this.onPlainTextLink) ? this.linkURI : this.browser.currentURI;
+-    let canPocket = CustomizableUI.getPlacementOfWidget("pocket-button") &&
+-                    window.pktApi && window.pktApi.isUserLoggedIn();
+-    canPocket = canPocket && (targetURI.schemeIs("http") || targetURI.schemeIs("https") ||
+-                              (targetURI.schemeIs("about") && ReaderMode.getOriginalUrl(targetURI.spec)));
+-    canPocket = canPocket && window.gBrowser && this.browser.getTabBrowser() == window.gBrowser;
+-
+-    if (canPocket) {
+-      let locale = Cc["@mozilla.org/chrome/chrome-registry;1"].
+-                   getService(Ci.nsIXULChromeRegistry).
+-                   getSelectedLocale("browser");
+-      if (locale != "en-US") {
+-        if (locale == "ja-JP-mac")
+-          locale = "ja";
+-        let url = "chrome://browser/content/browser-pocket-" + locale + ".properties";
+-        let bundle = Services.strings.createBundle(url);
+-        let saveToPocketItem = document.getElementById("context-pocket");
+-        let saveLinkToPocketItem = document.getElementById("context-savelinktopocket");
+-        try {
+-          saveToPocketItem.setAttribute("label", bundle.GetStringFromName("saveToPocketCmd.label"));
+-          saveToPocketItem.setAttribute("accesskey", bundle.GetStringFromName("saveToPocketCmd.accesskey"));
+-          saveLinkToPocketItem.setAttribute("label", bundle.GetStringFromName("saveLinkToPocketCmd.label"));
+-          saveLinkToPocketItem.setAttribute("accesskey", bundle.GetStringFromName("saveLinkToPocketCmd.accesskey"));
+-        } catch (err) {
+-          // GetStringFromName throws when the bundle doesn't exist.  In that
+-          // case, the item will retain the browser-pocket.dtd en-US string that
+-          // it has in the markup.
+-        }
+-      }
+-    }
+-    this.showItem("context-pocket", canPocket && showSaveCurrentPageToPocket);
+-    let showSaveLinkToPocket = canPocket && !showSaveCurrentPageToPocket &&
+-                               (this.onSaveableLink || this.onPlainTextLink);
+-    this.showItem("context-savelinktopocket", showSaveLinkToPocket);
+   },
+ 
+   initViewItems: function CM_initViewItems() {
+@@ -1692,14 +1651,6 @@
+     saveDocument(this.browser.contentDocumentAsCPOW);
+   },
+ 
+-  saveLinkToPocket: function CM_saveLinkToPocket() {
+-    Pocket.savePage(this.browser, this.linkURL);
+-  },
+-
+-  savePageToPocket: function CM_saveToPocket() {
+-    Pocket.savePage(this.browser, this.browser.currentURI.spec, this.browser.contentTitle);
+-  },
+-
+   printFrame: function CM_printFrame() {
+     PrintUtils.print(this.target.ownerDocument.defaultView, this.browser);
+   },
+diff -r fd224540ba0d -r dd4325bea3ac browser/components/moz.build
+--- a/browser/components/moz.build	Mon Jun 08 00:31:23 2015 +0000
++++ b/browser/components/moz.build	Mon Jun 08 00:48:15 2015 +0000
+@@ -12,7 +12,6 @@
+     'feeds',
+     'migration',
+     'places',
+-    'pocket',
+     'preferences',
+     'privatebrowsing',
+     'readinglist',
