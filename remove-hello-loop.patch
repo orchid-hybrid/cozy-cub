@@ -1,0 +1,49 @@
+# HG changeset patch
+# User cozy cub
+# Date 1433723483 0
+#      Mon Jun 08 00:31:23 2015 +0000
+# Node ID fd224540ba0da3fd01d28873e3f2ad8470f5d9d3
+# Parent  30a3b56bcecb4c388da624d0bffa8c91cf99774f
+delete Hello!/Loop[B
+
+diff -r 30a3b56bcecb -r fd224540ba0d browser/base/content/browser.js
+--- a/browser/base/content/browser.js	Mon Jun 08 00:08:51 2015 +0000
++++ b/browser/base/content/browser.js	Mon Jun 08 00:31:23 2015 +0000
+@@ -272,7 +272,7 @@
+ #include browser-fullScreen.js
+ #include browser-fullZoom.js
+ #include browser-gestureSupport.js
+-#include browser-loop.js
++//#include browser-loop.js
+ #include browser-places.js
+ #include browser-plugins.js
+ #include browser-readinglist.js
+@@ -1400,7 +1400,7 @@
+     gDataNotificationInfoBar.init();
+ #endif
+ 
+-    LoopUI.init();
++    //LoopUI.init();
+ 
+     gBrowserThumbnails.init();
+ 
+@@ -1569,7 +1569,7 @@
+       TabView.uninit();
+       SocialUI.uninit();
+       gBrowserThumbnails.uninit();
+-      LoopUI.uninit();
++      //LoopUI.uninit();
+       FullZoom.destroy();
+ 
+       Services.obs.removeObserver(gSessionHistoryObserver, "browser:purge-session-history");
+diff -r 30a3b56bcecb -r fd224540ba0d browser/components/moz.build
+--- a/browser/components/moz.build	Mon Jun 08 00:08:51 2015 +0000
++++ b/browser/components/moz.build	Mon Jun 08 00:31:23 2015 +0000
+@@ -10,7 +10,6 @@
+     'dirprovider',
+     'downloads',
+     'feeds',
+-    'loop',
+     'migration',
+     'places',
+     'pocket',
